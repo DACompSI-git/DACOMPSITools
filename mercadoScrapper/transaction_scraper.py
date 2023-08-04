@@ -11,7 +11,9 @@ class Transactions:
         chromeOptions = webdriver.ChromeOptions()
         if binary:
             chromeOptions.binary_location = binary
-        #chromeOptions.add_argument('--headless=new')
+
+        # enable selenium to run before page is fully loaded
+        chromeOptions.page_load_strategy = 'eager'
 
         self.browser = webdriver.Chrome(chromeOptions)
 
@@ -22,6 +24,9 @@ class Transactions:
     def goTo(self, url):
         if self.browser:
             self.browser.get(url)
+
+            # stop page loading, preventing it from being cleaned due to nonexistant cookies
+            self.browser.execute_script("window.stop();")
 
     # find list of li elements containing transaction data.
     def findList(self):
