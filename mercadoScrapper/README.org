@@ -1,0 +1,20 @@
+Um Scraper para transações do mercado pago, pra facilitar o trabalho da tesouraria.
+
+* Dependências
+- Selenium
+  #+begin_src shell
+    pip3 install Selenium
+  #+end_src
+
+* Uso
+  #+begin_src shell
+    python3 main.py [binário] [link]
+  #+end_src
+
+  onde:
+
+  - binário
+    localização do binário do chrome. Mesmo caso o binário seja o mesmo de sempre, é necessário para a especificação de um link.
+
+  - link
+    link da página do mercado pago.

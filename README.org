@@ -1,0 +1,8 @@
+* O que é isso?
+Um repo com algumas ferramentas para facilitar a gerência do DACOMPSi.
+
+* Por quê esse repo não tá na organização DACOMPSi?
+A organização está em mãos da gestão passada, e não possuo acesso à ela.
+
+* O que cada pasta faz?
+Definido no README da pasta em questão.
