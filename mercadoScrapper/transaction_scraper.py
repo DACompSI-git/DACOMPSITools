@@ -51,6 +51,22 @@ class Transactions:
         time = li.find_element(By.TAG_NAME, "time")
         return time.text
 
+    # get link to transaction from transaction li element.
+    def getTransactionLink(self, li):
+        link = li.find_element(By.TAG_NAME, "a").get_attribute('href')
+        return link
+
+    # get amount transferred in transaction.
+    def getTransactionAmount(self, li):
+        outerSpan = li.find_element(By.CLASS_NAME, "andes-money-amount")
+        fractionDiv = outerSpan.find_element(By.CLASS_NAME, "andes-money-amount__fraction")
+        centsDiv = outerSpan.find_element(By.CLASS_NAME, "andes-money-amount__cents")
+
+        fractionAmount = int(fractionDiv.text) * 100
+        centsAmount = int(centsDiv.text)
+
+        return (fractionAmount + centsAmount) / 100
+
     # scrape links from transactions, returning a list of links.
     def scrapeLinks(self):
         if not self.browser:
@@ -92,9 +108,13 @@ class Transactions:
                 info = {}
                 name = self.getTransactionName(li)
                 time = self.getTransactionDate(li)
+                link = self.getTransactionLink(li)
+                amount = self.getTransactionAmount(li)
 
                 info['name'] = name
                 info['time'] = time
+                info['link'] = link
+                info['amount'] = amount
                 data.append(info)
 
         except NoSuchElementException as nf:

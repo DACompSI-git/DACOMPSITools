@@ -21,7 +21,8 @@ links = driver.scrapeLinks()
 
 for entry in data:
     print("nome: " + entry['name'] + " | ")
-    print("data: " + entry['time'] + "\n")
+    print("data: " + entry['time'] + " | ")
+    print("quantidade: " + "{:.2f}".format(entry['amount']) + " | ")
+    print("link: " + entry['link'] + "\n")
 
-for link in links:
-    print(link)
+driver.close()
