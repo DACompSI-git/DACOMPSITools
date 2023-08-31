@@ -37,9 +37,14 @@ class Transactions:
 
     # get name from transaction li element.
     def getTransactionName(self, li):
-        div = li.find_element(By.CLASS_NAME, "ui-action-row__description")
-        span = div.find_element(By.TAG_NAME, "span")
-        return span.text
+        try:
+            div = li.find_element(By.CLASS_NAME, "ui-action-row__description")
+            span = div.find_element(By.TAG_NAME, "span")
+            return span.text
+
+        except NoSuchElementException as nf:
+            # return empty name since it doesn't exist
+            return ""
 
     # get date from transaction li element.
     def getTransactionDate(self, li):
