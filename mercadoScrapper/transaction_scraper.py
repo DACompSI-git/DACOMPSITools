@@ -17,7 +17,7 @@ class Transactions:
 
         self.browser = webdriver.Chrome(chromeOptions)
 
-    def close():
+    def close(self):
         self.browser.quit()
 
     # go to a specific URL
