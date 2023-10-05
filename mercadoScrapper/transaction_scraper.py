@@ -62,10 +62,18 @@ class Transactions:
         fractionDiv = outerSpan.find_element(By.CLASS_NAME, "andes-money-amount__fraction")
         centsDiv = outerSpan.find_element(By.CLASS_NAME, "andes-money-amount__cents")
 
-        fractionAmount = int(fractionDiv.text) * 100
+        fractionAmount = int(fractionDiv.text.replace('.','')) * 100
         centsAmount = int(centsDiv.text)
 
-        return (fractionAmount + centsAmount) / 100
+        # check if it's outgoing transaction
+        multiplier = 1
+        try:
+            negativeDiv = outerSpan.find_element(By.CLASS_NAME, "andes-money-amount__negative-symbol")
+            multiplier = -1
+        except NoSuchElementException:
+            multiplier = 1
+
+        return ((fractionAmount + centsAmount) / 100) * multiplier
 
     # scrape links from transactions, returning a list of links.
     def scrapeLinks(self):
@@ -125,5 +133,7 @@ class Transactions:
             # element not found; inform user
             print("A página mudou e o elemento não pode mais ser acessado: \n" + se.msg)
             print("Stack trace: " + se.stacktrace)
+
+        data.reverse()
 
         return data
