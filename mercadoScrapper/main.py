@@ -1,6 +1,7 @@
 from transaction_scraper import Transactions
 import time
 import xlsxwriter
+import os.path
 import sys
 
 # TODO copy user data profile folder so cookies can be reused
@@ -21,11 +22,21 @@ linkCol = 3
 row = 0
 
 # third arg forward = html pages to get data from
-links = sys.argv[3:]
+linkFolder = sys.argv[3]
 
 driver = Transactions(binPath)
 
-for link in links:
+# initial page number
+pageNum = 1
+
+while True:
+    filePath = linkFolder + "/" + str(pageNum).zfill(2) + ".html"
+
+    if (not os.path.isfile(filePath)):
+        print("Path " + filePath + " doesn't exist")
+        break
+
+    link = "file://" + filePath
     driver.goTo(link)
     #time.sleep(3)
 
@@ -41,6 +52,8 @@ for link in links:
         #print("link: " + entry['link'] + "\n")
         worksheet.write(row, linkCol, entry['link'])
         row += 1
+
+    pageNum = pageNum + 1
 
 driver.close()
 workbook.close()
