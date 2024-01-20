@@ -1,20 +1,25 @@
-Um Scraper para transações do mercado pago, pra facilitar o trabalho da tesouraria.
+Um Scrapper para transações do mercado pago, pra facilitar o trabalho da tesouraria.
 
 * Dependências
-- Selenium
-  #+begin_src shell
-    pip3 install Selenium
-  #+end_src
+Instale o pyenv ([[https://github.com/pyenv/pyenv?tab=readme-ov-file#automatic-installer][link do github]]), dê source no arquivo getEnv.sh contido na raiz do projeto, e instale as dependências contidas no requirements.txt com o pip.
+
+#+begin_src shell
+  pip install -r requirements.txt
+#+end_src
+
 
 * Uso
   #+begin_src shell
-    python3 main.py [binário] [link]
+    python3 main.py [binário] [arquivo final] [pasta]
   #+end_src
 
   onde:
 
   - binário
-    localização do binário do chrome. Mesmo caso o binário seja o mesmo de sempre, é necessário para a especificação de um link.
+    localização do binário do chrome. Para o selenium-manager funcionar corretamente, é necessário que o mesmo esteja em /usr.
 
-  - link
-    link da página do mercado pago.
+  - arquivo final
+    local onde o arquivo .xlsx será salvo.
+
+  - pasta
+    local onde a pasta que contem os arquivos .html nomeados de 01.html até xx.html estão contidos. É necessário que os arquivos comecem de 01; não existe conexão entre o nome do arquivo e o número da página do mercado pago.
