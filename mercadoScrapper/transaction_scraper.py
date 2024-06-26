@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
 
 import requests
+import re
 
 class Transactions:
     def __init__(self, binary):
@@ -40,7 +41,8 @@ class Transactions:
         try:
             div = li.find_element(By.CLASS_NAME, "ui-action-row__description")
             span = div.find_element(By.TAG_NAME, "span")
-            return span.text
+            # remove redundant leading transaction designators
+            return re.sub("^de |^para ", "", span.text)
 
         except NoSuchElementException as nf:
             # return empty name since it doesn't exist
