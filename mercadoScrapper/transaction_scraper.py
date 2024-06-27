@@ -32,17 +32,18 @@ class Transactions:
     # find list of li elements containing transaction data.
     def findList(self):
         # narrow up elements for better speed
-        acList = self.browser.find_element(By.CLASS_NAME, "c-activity-list")
-        ulList = acList.find_element(By.TAG_NAME, "ul")
-        return ulList.find_elements(By.TAG_NAME, "li")
+        acList = self.browser.find_element(By.CLASS_NAME, "activities-list")
+        #ulList = acList.find_element(By.TAG_NAME, "ul")
+        return acList.find_elements(By.TAG_NAME, "li")
 
     # get name from transaction li element.
     def getTransactionName(self, li):
         try:
-            div = li.find_element(By.CLASS_NAME, "ui-action-row__description")
-            span = div.find_element(By.TAG_NAME, "span")
+            div = li.find_element(By.CLASS_NAME, "ui-rowfeed-title")
+            #span = div.find_element(By.TAG_NAME, "span")
             # remove redundant leading transaction designators
-            return re.sub("^de |^para ", "", span.text)
+            #return re.sub("^de |^para ", "", span.text)
+            return div.text
 
         except NoSuchElementException as nf:
             # return empty name since it doesn't exist
@@ -50,7 +51,7 @@ class Transactions:
 
     # get date from transaction li element.
     def getTransactionDate(self, li):
-        time = li.find_element(By.TAG_NAME, "time")
+        time = li.find_element(By.CLASS_NAME, "ui-rowfeed-date")
         return time.text
 
     # get link to transaction from transaction li element.
@@ -117,6 +118,7 @@ class Transactions:
                 # get direct info
                 info = {}
                 name = self.getTransactionName(li)
+                print(name)
                 time = self.getTransactionDate(li)
                 link = self.getTransactionLink(li)
                 amount = self.getTransactionAmount(li)
