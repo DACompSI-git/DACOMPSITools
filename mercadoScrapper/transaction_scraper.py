@@ -29,30 +29,44 @@ class Transactions:
             # stop page loading, preventing it from being cleaned due to nonexistant cookies
             self.browser.execute_script("window.stop();")
 
-    # find list of li elements containing transaction data.
+    # find groups of lists of li elements containing transaction data.
     def findList(self):
         # narrow up elements for better speed
-        acList = self.browser.find_element(By.CLASS_NAME, "activities-list")
+        acList = self.browser.find_element(By.CLASS_NAME, "andes-list")
         #ulList = acList.find_element(By.TAG_NAME, "ul")
-        return acList.find_elements(By.TAG_NAME, "li")
+        return acList.find_elements(By.CLASS_NAME, "binnacle-rows-wrapper")
+
+    def findTransactionGroups(self, li):
+        ol = li.find_element(By.TAG_NAME, "ol")
+        return ol.find_elements(By.TAG_NAME, "li")
 
     # get name from transaction li element.
     def getTransactionName(self, li):
+        col = li.find_element(By.CLASS_NAME, "andes-list__item-first-column")
         try:
-            div = li.find_element(By.CLASS_NAME, "ui-rowfeed-title")
-            #span = div.find_element(By.TAG_NAME, "span")
-            # remove redundant leading transaction designators
-            #return re.sub("^de |^para ", "", span.text)
+            span = col.find_element(By.CLASS_NAME, "andes-list__item-secondary")
+            return span.text
+
+        except NoSuchElementException:
+            # get primary column since it always exists
+            span = col.find_element(By.CLASS_NAME, "andes-list__item-primary")
+            return span.find_element(By.CLASS_NAME, "binnacle-row__title").text
+
+    # get group date from li element.
+    def getTransactionDate(self, li):
+        try:
+            div = li.find_element(By.CLASS_NAME, "binnacle-rows-wrapper__title")
             return div.text
 
         except NoSuchElementException as nf:
             # return empty name since it doesn't exist
-            return ""
+            return "BADDATE"
 
-    # get date from transaction li element.
-    def getTransactionDate(self, li):
-        time = li.find_element(By.CLASS_NAME, "ui-rowfeed-date")
-        return time.text
+    def getTransactionTime(self, li):
+        column = li.find_element(By.CLASS_NAME, "andes-list__item-second-column")
+        time = column.find_element(By.CLASS_NAME, "binnacle-row__time")
+        return time.text.replace('h',':')
+
 
     # get link to transaction from transaction li element.
     def getTransactionLink(self, li):
@@ -61,7 +75,8 @@ class Transactions:
 
     # get amount transferred in transaction.
     def getTransactionAmount(self, li):
-        outerSpan = li.find_element(By.CLASS_NAME, "andes-money-amount")
+        column = li.find_element(By.CLASS_NAME, "andes-list__item-second-column")
+        outerSpan = column.find_element(By.CLASS_NAME, "andes-money-amount")
         fractionDiv = outerSpan.find_element(By.CLASS_NAME, "andes-money-amount__fraction")
         centsDiv = outerSpan.find_element(By.CLASS_NAME, "andes-money-amount__cents")
 
@@ -112,31 +127,31 @@ class Transactions:
         data = []
 
         try:
-            fullList = self.findList();
-
-            for li in fullList:
-                # get direct info
-                info = {}
-                name = self.getTransactionName(li)
-                print(name)
-                time = self.getTransactionDate(li)
-                link = self.getTransactionLink(li)
-                amount = self.getTransactionAmount(li)
-
-                info['name'] = name
-                info['time'] = time
-                info['link'] = link
-                info['amount'] = amount
-                data.append(info)
+            group = self.findList()
+            for li in group:
+                date = self.getTransactionDate(li)
+                groupTransactions = self.findTransactionGroups(li)
+                for tran in groupTransactions:
+                    info = {}
+                    name = self.getTransactionName(tran)
+                    time = self.getTransactionTime(tran)
+                    link = self.getTransactionLink(tran)
+                    amount = self.getTransactionAmount(tran)
+                    info['name'] = name
+                    info['date'] = date
+                    info['time'] = time
+                    info['amount'] = amount
+                    info['link'] = link
+                    data.append(info)
 
         except NoSuchElementException as nf:
             # element not found; inform user
-            print("Não foi possível encontrar o elemento informado pelo selenium: \n" + nf.msg)
+            print(f"Não foi possível encontrar o elemento informado pelo selenium: ${nf.msg}")
 
         except StaleElementReferenceException as se:
             # element not found; inform user
-            print("A página mudou e o elemento não pode mais ser acessado: \n" + se.msg)
-            print("Stack trace: " + se.stacktrace)
+            print(f"A página mudou e o elemento não pode mais ser acessado: ${se.msg}")
+            print(f"Stack trace: ${se.stacktrace}")
 
         data.reverse()
 

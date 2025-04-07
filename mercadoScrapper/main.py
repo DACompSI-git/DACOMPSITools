@@ -17,8 +17,9 @@ worksheet = workbook.add_worksheet()
 
 nameCol = 0
 dateCol = 1
-amountCol = 2
-linkCol = 3
+timeCol = 2
+amountCol = 3
+linkCol = 4
 row = 0
 
 # third arg forward = html pages to get data from
@@ -46,7 +47,8 @@ while True:
         #print("nome: " + entry['name'] + " | ")
         worksheet.write(row, nameCol, entry['name'])
         #print("data: " + entry['time'] + " | ")
-        worksheet.write(row, dateCol, entry['time'])
+        worksheet.write(row, dateCol, entry['date'])
+        worksheet.write(row, timeCol, entry['time'])
         #print("quantidade: " + "{:.2f}".format(entry['amount']) + " | ")
         worksheet.write(row, amountCol, "{:.2f}".format(entry['amount']))
         #print("link: " + entry['link'] + "\n")
